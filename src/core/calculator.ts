@@ -1,20 +1,16 @@
-import { Operation, CalculationState, Tax } from "../types"
-import { handleBuy, handleSell } from "./handlers"
+import Portifolio from "../domain/Portfolio"
+import { Operation, Tax } from "../types"
 
 export const calculateTaxes = (operations: Operation[]): Tax[] => {
-    const state = {
-        avgProfit: 0,
-        loss: 0,
-        quantity: 0
-    } as CalculationState
+    const portifolio = new Portifolio()
     const taxes = [] as Tax[]
 
     for (let op of operations) {
         if (op.operation === "buy") {
-            handleBuy(op, state)
+            portifolio.buy(op)
             taxes.push({ tax: 0 })
         } else {
-            const tax = handleSell(op, state)
+            const tax = portifolio.sell(op)
             taxes.push(tax)
         }
     }
