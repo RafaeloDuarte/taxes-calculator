@@ -49,6 +49,18 @@ class Portifolio {
         if (total <= 20000 || profit < 0) return true
         return false
     }
+
+    getAvgProfit(): number {
+        return this.avgProfit
+    }
+
+    getLoss(): number {
+        return this.loss
+    }
+
+    getQuantity(): number {
+        return this.quantity
+    }
 }
 
 export default Portifolio
