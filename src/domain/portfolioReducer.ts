@@ -1,11 +1,5 @@
 import { round2 } from "../utils"
-import { PortifolioEvent } from "./events"
-
-export type PortifolioState = {
-    avgProfit: number
-    quantity: number
-    losses: number
-}
+import { PortifolioEvent, PortifolioState } from "./events"
 
 export type PortifolioResult = {
     state: PortifolioState
@@ -40,7 +34,7 @@ function reduceBuy(
     const beforeCost = state.avgProfit * state.quantity
     const newCost = event.unitCost * event.quantity
     const newQuantity = state.quantity + event.quantity
-    
+
     const newAvg = (beforeCost + newCost) / newQuantity
 
     return {

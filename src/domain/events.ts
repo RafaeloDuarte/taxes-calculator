@@ -13,7 +13,7 @@ export type SellEvent = {
 export type PortifolioEvent = BuyEvent | SellEvent
 
 export type PortifolioState = {
-    quantity: number,
-    avgPrice: number,
+    avgProfit: number
+    quantity: number
     losses: number
 }
