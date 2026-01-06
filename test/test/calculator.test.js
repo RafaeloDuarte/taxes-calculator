@@ -17,12 +17,14 @@ describe("Capital Gain Calculator", () => {
 
     it("When sell's total is less than 20.000,00 or equal it", () => {
         const ops = [
+            { operation: "buy", unitCost: 10, quantity: 100 },
             { operation: "sell", unitCost: 3, quantity: 100 }
         ];
 
         const result = calculateTaxes(ops);
 
         expect(result).toEqual([
+            { tax: 0 },
             { tax: 0 }
         ]);
     });
@@ -201,4 +203,73 @@ describe("Capital Gain Calculator", () => {
         ]);
     });
 
+    it('Venda com quantidade superior à quantidade obtida', () => {
+        const ops = [
+            { "operation": "buy", unitCost: 10, "quantity": 10000 },
+            { "operation": "sell", unitCost: 20, "quantity": 11000 }
+        ]
+
+        const result = calculateTaxes(ops);
+
+        expect(result).toEqual([
+            { tax: 0 },
+            { error: "Can't sell more stocks than you have" }
+        ])
+    })
+
+    it('Venda com quantidade superior à quantidade obtida seguida de venda permitida', () => {
+        const ops = [
+            { "operation": "buy", unitCost: 10, "quantity": 10000 },
+            { "operation": "sell", unitCost: 20, "quantity": 11000 },
+            { "operation": "sell", unitCost: 20, "quantity": 5000 }
+        ]
+
+        const result = calculateTaxes(ops);
+
+        expect(result).toEqual([
+            { tax: 0 },
+            { error: "Can't sell more stocks than you have" },
+            { tax: 10000 },
+        ])
+    })
+
+    it('Tentativa de operação após três tentativas inválidas consecutivas', () => {
+        const ops = [
+            { operation: "sell", unitCost: 20, quantity: 10000 },
+            { operation: "sell", unitCost: 20, quantity: 10000 },
+            { operation: "sell", unitCost: 20, quantity: 10000 },
+            { operation: "buy", unitCost: 10, quantity: 10000 },
+            { operation: "sell", unitCost: 10, quantity: 10000 }
+        ]
+
+        const result = calculateTaxes(ops);
+
+        expect(result).toEqual([
+            { error: "Can't sell more stocks than you have" },
+            { error: "Can't sell more stocks than you have" },
+            { error: "Can't sell more stocks than you have" },
+            { error: "Your account is blocked" },
+            { error: "Your account is blocked" }
+        ])
+    })
+
+    it('Tentativa de operação após três tentativas inválidas não consecutivas', () => {
+        const ops = [
+            { operation: "sell", unitCost: 20, quantity: 10000 },
+            { operation: "sell", unitCost: 20, quantity: 10000 },
+            { operation: "buy", unitCost: 10, quantity: 10000 },
+            { operation: "sell", unitCost: 10, quantity: 20000 },
+            { operation: "buy", unitCost: 10, quantity: 10000 },
+        ]
+
+        const result = calculateTaxes(ops);
+
+        expect(result).toEqual([
+            { error: "Can't sell more stocks than you have" },
+            { error: "Can't sell more stocks than you have" },
+            { tax: 0 },
+            { error: "Can't sell more stocks than you have" },
+            { tax: 0 },
+        ])
+    })
 });
